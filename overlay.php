@@ -1,22 +1,22 @@
-#overlay
 <?php 
 	require( __DIR__.'/facebook_start.php' );
 	
 	$token = $_SESSION['facebook_access_token'];
-   	//$r = new HttpRequest('https://graph.facebook.com/me?access_token='.$r, HttpRequest::METH_POST);
-
-	$output = curly($token);
-	echo $output;
-	$r=json_decode($output, true);
+   	$user = "https://graph.facebook.com/me?access_token=".$token;
+	$response = file_get_contents($user);
+	$r=json_decode($response, true);
 	$id= $r['id'];
-	$path = "cache/".$id.".jpg";
+	//print_r($response);
+	//echo "$id 6666";
+	$path = "images/".$id.".jpg";
 	$_SESSION['path'] = $path;
 	// only create if not already exists in cache
 	if (!file_exists($path)){	
 		create($id, $path);
 	}
 	else{
-		echo " \n already exitst : ".$path;
+		create($id, $path);
+		
 	}
 	//override line 13. Always create for testing purposes
 	//create($id, $path);
@@ -54,12 +54,17 @@
 	    // base image is just a transparent png in the same size as the input image
 		$base_image = imagecreatefrompng("images/template320.png");
 	    // Get the facebook profile image in 200x200 pixels
+	    $img = file_get_contents('https://graph.facebook.com/'.$id.'/picture?type=large');
+	    //echo "$id 777";
+	    $file ='images/'.$id.'.jpg';
+	    file_put_contents($file, $img);
 		$photo = imagecreatefromjpeg("http://graph.facebook.com/".$id."/picture?width=320&height=320");
+		//echo "$photo";
 		//$photo = imagecreatefromjpeg("http://graph.facebook.com/".$id."/picture?width=200&height=200");
 
 		//resizeImage($photo,920,920);
 	    // read overlay  
-		$overlay = imagecreatefrompng("images/overlay320n.png");
+		$overlay = imagecreatefrompng("images/overlay320.png");
 	    // keep transparency of base image
 		imagesavealpha($base_image, true);
 		imagealphablending($base_image, true);
@@ -122,7 +127,7 @@
 			</ul>
 	      
 	      </div>
-	      <div class="footer"><a href='https://github.com/ashwin47/Net-Neutral'>Made</a> by <a href="http://twitter.com/ashwinm">@ashwinm</a> </div>
+	      <!--<div class="footer"><a href='https://github.com/ashwin47/Net-Neutral'>Made</a> by <a href="http://twitter.com/ashwinm">@ashwinm</a> </div>-->
 	    </div>
     </div>
 
